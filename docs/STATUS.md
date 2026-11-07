@@ -1,6 +1,15 @@
 # Status
 
-Updated: 2026-11-07 (Sprint 0 foundations)
+Updated: 2026-11-07 (Sprint 0 foundations; first public release built by CI)
+
+## Distribution
+
+- Repository: <https://github.com/crizaaq2/sharext> (public, `main`).
+- Release: <https://github.com/crizaaq2/sharext/releases/tag/v0.1.0> — universal /
+  arm64 / arm32 APKs, `sharext-v0.1.0-windows.zip` (contains `sharext.exe`) and
+  `SHA256SUMS.txt`. Assets download without a GitHub account.
+- Built by `.github/workflows/release.yml` on the `v0.1.0` tag; the same jobs run
+  on every push through `ci.yml`.
 
 ## Where we are
 
@@ -13,9 +22,9 @@ transport, because **no Bluetooth plugin exists yet**. Nothing in this build
 touches a radio.
 
 The Windows app has a complete source target, an icon set, a build script and a
-CI job, but no EXE has been produced from this machine: Flutter compiles the
-Windows runner with MSVC and does not cross-compile it from Linux. See
-`docs/RELEASE.md`.
+CI job. The **first `sharext.exe` was built by CI** on `windows-latest` and ships
+inside `sharext-v0.1.0-windows.zip`; it has not been run on a Windows machine yet,
+because this machine cannot cross-compile the runner (see `docs/RELEASE.md`).
 
 ## Verified in this session
 
@@ -41,7 +50,7 @@ survival (needs devices).
 |---|---|---|
 | SX-001 Bootstrap the repository | Done | analyze clean, all tests pass, APK builds |
 | SX-002 Agent operating files | Done | `AGENTS.md`, `docs/PLAN.md`, `PROTOCOL.md`, `DESIGN.md`, `STATUS.md`, `QUESTIONS.md`, `qa/` |
-| SX-003 Continuous integration | Written, never run | `.github/workflows/ci.yml` (core, APK universal + per-ABI, Windows zip). Needs the owner's GitHub repo |
+| SX-003 Continuous integration | Done | `ci.yml` run 42396426196: core tests, Android APK, Windows EXE all green in 5m21s. `release.yml` run 42396902941 published `v0.1.0` with all four assets |
 | SX-004 Flavors and signing | Partial | `dev`/`prod` flavors; prod builds. Release keystore is the owner's (`docs/RELEASE.md`) |
 | SX-005 Localization scaffold | Done | ARB en/so/ar, `flutter gen-l10n`, RTL widget test |
 | SX-006 Logging and diagnostics | Partial | `SxLog` ring buffer + `Redactor` with tests; Diagnostics sheet shows the export |
