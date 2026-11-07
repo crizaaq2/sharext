@@ -9,8 +9,6 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'constants.dart';
-
 /// What the radio on this device can do (SX-202 fills this in for real).
 class RadioCapabilities {
   const RadioCapabilities({
