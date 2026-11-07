@@ -81,3 +81,13 @@ the files stay as run artifacts.
 | Windows job: `Unable to find suitable Visual Studio toolchain` | Rare on `windows-latest`; re-run the job. Locally, install "Desktop development with C++" |
 | Windows job: build succeeds but no EXE | The output is `build\windows\x64\runner\Release\sharext.exe`; the zip step packages that folder |
 | Android job: `SDK location not found` | `actions/setup-java` plus the Flutter action handle it; check `android/local.properties` is not committed (it must stay local) |
+
+## 7. If the release job fails with 403
+
+The release job needs to write to the repository. On a new repository GitHub may
+default `GITHUB_TOKEN` to read-only, which downgrades the workflow's
+`permissions: contents: write`. Fix it once:
+
+Settings → Actions → General → Workflow permissions → **Read and write
+permissions** → Save, then re-run the workflow. The build jobs themselves need
+nothing beyond read access.
