@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="so">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ShAre XT — soo dejiso APK</title>
+<style>
+  :root {
+    --tide-ink: #06222b;
+    --reef: #0d3441;
+    --lagoon: #22d1c6;
+    --sun: #ffb43a;
+    --foam: #eaf7f6;
+    --mist: #8fb4b8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--tide-ink);
+    color: var(--foam);
+    font-family: "Segoe UI", system-ui, -apple-system, "Noto Sans", sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 32px 20px 64px;
+  }
+  main { width: 100%; max-width: 640px; }
+  .brand { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+  .wordmark { font-size: 22px; letter-spacing: -0.02em; }
+  .wordmark b { font-weight: 800; }
+  .wordmark span { font-weight: 300; }
+  h1 { font-size: 30px; line-height: 1.15; letter-spacing: -0.02em; margin: 24px 0 6px; }
+  p.lead { color: var(--mist); margin: 0 0 24px; line-height: 1.5; }
+  .files { display: grid; gap: 12px; }
+  a.file {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    text-decoration: none; color: var(--foam);
+    background: var(--reef);
+    border: 1px solid rgba(143, 180, 184, 0.25);
+    border-radius: 16px;
+    padding: 16px 18px;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  a.file:hover { border-color: var(--lagoon); transform: translateY(-1px); }
+  a.file .name { font-weight: 600; }
+  a.file .meta { color: var(--mist); font-size: 13px; margin-top: 3px; }
+  a.file .tag {
+    flex: none; font-size: 12px; color: var(--tide-ink); background: var(--lagoon);
+    border-radius: 999px; padding: 4px 10px; font-weight: 700;
+  }
+  a.file.secondary .tag { background: transparent; color: var(--sun); border: 1px solid rgba(255, 180, 58, 0.5); }
+  h2 { font-size: 15px; color: var(--mist); margin: 32px 0 10px; }
+  ol { margin: 0; padding-inline-start: 20px; line-height: 1.7; }
+  ol li { margin-bottom: 6px; }
+  .note {
+    margin-top: 28px; padding: 14px 16px; border-radius: 14px;
+    background: rgba(255, 180, 58, 0.08); border: 1px solid rgba(255, 180, 58, 0.35);
+    color: var(--mist); font-size: 14px; line-height: 1.55;
+  }
+  .note b { color: var(--sun); }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">
+    <svg width="44" height="44" viewBox="0 0 512 512" aria-hidden="true">
+      <rect width="512" height="512" rx="116" fill="#06222B" />
+      <path d="M256 167.21A100 100 0 0 0 256 344.79A100 100 0 0 0 256 167.21Z" fill="#EAF7F6" />
+      <circle cx="210" cy="256" r="100" fill="none" stroke="#22D1C6" stroke-width="24" />
+      <circle cx="302" cy="256" r="100" fill="none" stroke="#FFB43A" stroke-width="24" />
+      <path d="M236.65 159.62A100 100 0 0 1 273.61 178.84" fill="none" stroke="#22D1C6" stroke-width="24" />
+    </svg>
+    <div class="wordmark"><b>Sh</b><span>Are</span> <b>XT</b></div>
+  </div>
+
+  <h1>Soo dejiso APK-ga</h1>
+  <p class="lead">Version 0.1.0 · Android 8+ (API 26) · nooc tijaabo ah, Bluetooth weli kuma jiro.</p>
+
+  <div class="files">
+    <a class="file" href="ShAreXT-0.1.0-android-universal.apk" download>
+      <div>
+        <div class="name">Universal APK</div>
+        <div class="meta">52 MB · telefoon kasta (arm64, arm32, x86_64)</div>
+      </div>
+      <div class="tag">Soo dejiso</div>
+    </a>
+    <a class="file secondary" href="ShAreXT-0.1.0-android-arm64.apk" download>
+      <div>
+        <div class="name">arm64 APK</div>
+        <div class="meta">20.5 MB · telefoon casri ah</div>
+      </div>
+      <div class="tag">Soo deji</div>
+    </a>
+    <a class="file secondary" href="ShAreXT-0.1.0-android-arm32.apk" download>
+      <div>
+        <div class="name">arm32 APK</div>
+        <div class="meta">18 MB · telefoon duq ah (Android 8–10)</div>
+      </div>
+      <div class="tag">Soo deji</div>
+    </a>
+    <a class="file secondary" href="SHA256SUMS.txt" download>
+      <div>
+        <div class="name">SHA256SUMS.txt</div>
+        <div class="meta">Hubinta faylasha</div>
+      </div>
+      <div class="tag">Fayl</div>
+    </a>
+  </div>
+
+  <h2>Sida loo rakibo</h2>
+  <ol>
+    <li>Riix APK-ga kore, faylka u guuri telefoonka.</li>
+    <li>Fur faylka → Android waxa uu weydiinayaa "Install unknown apps" → u oggolow.</li>
+    <li>Riix <b>Install</b>. Play Protect waxa laga yaabaa inuu digniin muujiyo — APK-gu wuxuu ku saxeexan yahay debug key, taasi waa caadi nooca tijaabada.</li>
+    <li>Fur "ShAre XT": splash-ka lens, 3 slide, kadib Around you.</li>
+  </ol>
+
+  <div class="note">
+    <b>Xusuusnow:</b> noocan Bluetooth ma laha (plugin-ka radio waa EP-03). Fariin kastaa waxay ku hadhaa safka
+    <i>queued</i>, oo shaashaddu waxay leedahay "Waiting for Axmed's phone". Taasi waa runta, ma aha bug.
+  </div>
+</main>
+</body>
+</html>

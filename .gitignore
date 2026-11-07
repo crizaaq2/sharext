@@ -1,0 +1,36 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android
+**/android/.gradle/
+**/android/local.properties
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+*.jks
+*.keystore
+key.properties
+
+# Windows build output
+**/windows/flutter/ephemeral/
+**/windows/x64/
+*.exe
+*.msix
+
+# Generated localization (regenerate with `flutter gen-l10n`)
+app/lib/l10n/generated/
+
+# Logs
+*.log
+
+# Hand-out builds live in dist/ and are produced by CI, not committed.
+dist/*.apk
+dist/*.zip
+dist/SHA256SUMS.txt
