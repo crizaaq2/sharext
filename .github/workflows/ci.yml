@@ -117,19 +117,69 @@ jobs:
       - name: Package
         working-directory: app
         run: Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath ..\sharext-windows.zip -Force
-      # Compiling is not the same as starting. Launch the packaged EXE from the
-      # same folder the ZIP ships, and fail if it dies inside 12 seconds.
+      # Compiling is not the same as starting, and starting is not the same as
+      # drawing a window. Launch the packaged EXE from the folder the ZIP ships,
+      # fail if it dies inside 12 seconds, and screenshot the desktop so a human
+      # can see the first frame without owning a Windows machine.
       - name: Smoke test the EXE
         working-directory: app
         shell: pwsh
         run: |
+          Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+          Add-Type @"
+          using System;
+          using System.Runtime.InteropServices;
+          public static class SxWin {
+            [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
+            [DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr h, int x, int y, int w, int t, bool repaint);
+            [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int cmd);
+          }
+          "@
+
           $release = "build\windows\x64\runner\Release"
           if (-not (Test-Path "$release\sharext.exe")) { throw "sharext.exe was not produced" }
           $p = Start-Process -FilePath (Resolve-Path "$release\sharext.exe") -PassThru
           Start-Sleep -Seconds 12
+          $p.Refresh()
           if ($p.HasExited) { throw "sharext.exe exited early (code $($p.ExitCode))" }
           "sharext.exe is running: pid $($p.Id), working set $([math]::Round($p.WorkingSet64 / 1MB, 1)) MB"
+
+          $hwnd = $p.MainWindowHandle
+          if ($hwnd -eq [IntPtr]::Zero) { throw "sharext.exe is alive but has no main window" }
+          "window title: $($p.MainWindowTitle)"
+          [SxWin]::ShowWindow($hwnd, 9) | Out-Null              # SW_RESTORE
+          [SxWin]::MoveWindow($hwnd, 0, 0, 1000, 720, $true) | Out-Null
+          [SxWin]::SetForegroundWindow($hwnd) | Out-Null
+          Start-Sleep -Seconds 3
+
+          $bounds = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+          $bmp = New-Object System.Drawing.Bitmap $bounds.Width, $bounds.Height
+          $g = [System.Drawing.Graphics]::FromImage($bmp)
+          $g.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
+          $png = Join-Path $env:GITHUB_WORKSPACE "sharext-window.png"
+          $bmp.Save($png, [System.Drawing.Imaging.ImageFormat]::Png)
+          $g.Dispose(); $bmp.Dispose()
+
+          # A locked or headless desktop captures as one flat colour, which proves
+          # nothing, so count distinct colours and say so in the log.
+          $shot = [System.Drawing.Bitmap]::FromFile($png)
+          $seen = @{}
+          for ($x = 0; $x -lt $shot.Width; $x += 16) {
+            for ($y = 0; $y -lt $shot.Height; $y += 16) { $seen[$shot.GetPixel($x, $y).ToArgb()] = 1 }
+          }
+          $shot.Dispose()
+          "screenshot: $($bounds.Width)x$($bounds.Height), $($seen.Count) distinct colours, $([math]::Round((Get-Item $png).Length / 1KB, 1)) KB"
+          if ($seen.Count -lt 5) {
+            Write-Host "::warning::screenshot is nearly one colour, so the runner desktop may be locked or headless"
+          }
+
           Stop-Process -Id $p.Id -Force
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sharext-windows-screenshot
+          path: sharext-window.png
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
         with:
           name: sharext-windows
