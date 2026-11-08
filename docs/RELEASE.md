@@ -64,9 +64,12 @@ The `.github/workflows/ci.yml` Windows job builds the same ZIP on
 have Linux and a phone. It also launches the packaged `sharext.exe` and fails if
 the process dies within 12 s, because compiling is not the same as starting.
 
-`app/android/gradle/wrapper/gradle-wrapper.properties` points at
-`downloads.gradle.org` on purpose: the default `services.gradle.org` URL redirects
-to a GitHub release asset, and that host answered 504 twice in a row (2026-11-08).
+`app/android/gradle/wrapper/gradle-wrapper.properties` points at a Gradle mirror on
+purpose: the official URLs redirect to a GitHub release asset that answered 504 for
+half an hour on 2026-11-08 and took the Android job down four times. The mirror
+serves the same bytes and `distributionSha256Sum` holds Gradle's published
+checksum (`gradle-9.3.1-bin.zip.sha256`), so a wrong or tampered download is
+refused instead of unpacked. The build step also retries three times.
 
 ## Artificial facts to keep straight
 
