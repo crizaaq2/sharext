@@ -130,9 +130,11 @@ jobs:
           using System;
           using System.Runtime.InteropServices;
           public static class SxWin {
+            [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left, Top, Right, Bottom; }
             [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
             [DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr h, int x, int y, int w, int t, bool repaint);
             [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int cmd);
+            [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, [ref] RECT r);
           }
           "@
 
@@ -156,8 +158,27 @@ jobs:
           $bmp = New-Object System.Drawing.Bitmap $bounds.Width, $bounds.Height
           $g = [System.Drawing.Graphics]::FromImage($bmp)
           $g.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
+
+          # Crop to the app window so the runner's own console is not in the shot.
+          $rect = New-Object SxWin+RECT
+          [SxWin]::GetWindowRect($hwnd, [ref]$rect) | Out-Null
+          $cx = [Math]::Max(0, $rect.Left)
+          $cy = [Math]::Max(0, $rect.Top)
+          $cw = [Math]::Min($bounds.Width - $cx, $rect.Right - $rect.Left)
+          $ch = [Math]::Min($bounds.Height - $cy, $rect.Bottom - $rect.Top)
           $png = Join-Path $env:GITHUB_WORKSPACE "sharext-window.png"
-          $bmp.Save($png, [System.Drawing.Imaging.ImageFormat]::Png)
+          if ($cw -gt 0 -and $ch -gt 0) {
+            $crop = New-Object System.Drawing.Bitmap $cw, $ch
+            $cg = [System.Drawing.Graphics]::FromImage($crop)
+            $dest = New-Object System.Drawing.Rectangle 0, 0, $cw, $ch
+            $src = New-Object System.Drawing.Rectangle $cx, $cy, $cw, $ch
+            $cg.DrawImage($bmp, $dest, $src, [System.Drawing.GraphicsUnit]::Pixel)
+            $crop.Save($png, [System.Drawing.Imaging.ImageFormat]::Png)
+            $cg.Dispose(); $crop.Dispose()
+            "cropped to the window: $($cx),$($cy) ${cw}x${ch}"
+          } else {
+            $bmp.Save($png, [System.Drawing.Imaging.ImageFormat]::Png)
+          }
           $g.Dispose(); $bmp.Dispose()
 
           # A locked or headless desktop captures as one flat colour, which proves
@@ -167,8 +188,10 @@ jobs:
           for ($x = 0; $x -lt $shot.Width; $x += 16) {
             for ($y = 0; $y -lt $shot.Height; $y += 16) { $seen[$shot.GetPixel($x, $y).ToArgb()] = 1 }
           }
+          $shotW = $shot.Width
+          $shotH = $shot.Height
           $shot.Dispose()
-          "screenshot: $($bounds.Width)x$($bounds.Height), $($seen.Count) distinct colours, $([math]::Round((Get-Item $png).Length / 1KB, 1)) KB"
+          "screenshot: ${shotW}x${shotH}, $($seen.Count) distinct colours, $([math]::Round((Get-Item $png).Length / 1KB, 1)) KB"
           if ($seen.Count -lt 5) {
             Write-Host "::warning::screenshot is nearly one colour, so the runner desktop may be locked or headless"
           }
