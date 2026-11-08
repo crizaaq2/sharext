@@ -130,11 +130,9 @@ jobs:
           using System;
           using System.Runtime.InteropServices;
           public static class SxWin {
-            [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left, Top, Right, Bottom; }
             [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
             [DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr h, int x, int y, int w, int t, bool repaint);
             [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int cmd);
-            [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, [ref] RECT r);
           }
           "@
 
@@ -149,8 +147,11 @@ jobs:
           $hwnd = $p.MainWindowHandle
           if ($hwnd -eq [IntPtr]::Zero) { throw "sharext.exe is alive but has no main window" }
           "window title: $($p.MainWindowTitle)"
+          # One known rectangle makes the crop deterministic, so no window-rect
+          # marshalling is needed.
+          $winX = 12; $winY = 12; $winW = 1000; $winH = 720
           [SxWin]::ShowWindow($hwnd, 9) | Out-Null              # SW_RESTORE
-          [SxWin]::MoveWindow($hwnd, 0, 0, 1000, 720, $true) | Out-Null
+          [SxWin]::MoveWindow($hwnd, $winX, $winY, $winW, $winH, $true) | Out-Null
           [SxWin]::SetForegroundWindow($hwnd) | Out-Null
           Start-Sleep -Seconds 3
 
@@ -160,12 +161,10 @@ jobs:
           $g.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
 
           # Crop to the app window so the runner's own console is not in the shot.
-          $rect = New-Object SxWin+RECT
-          [SxWin]::GetWindowRect($hwnd, [ref]$rect) | Out-Null
-          $cx = [Math]::Max(0, $rect.Left)
-          $cy = [Math]::Max(0, $rect.Top)
-          $cw = [Math]::Min($bounds.Width - $cx, $rect.Right - $rect.Left)
-          $ch = [Math]::Min($bounds.Height - $cy, $rect.Bottom - $rect.Top)
+          $cx = [Math]::Min($winX, $bounds.Width)
+          $cy = [Math]::Min($winY, $bounds.Height)
+          $cw = [Math]::Min($bounds.Width - $cx, $winW)
+          $ch = [Math]::Min($bounds.Height - $cy, $winH)
           $png = Join-Path $env:GITHUB_WORKSPACE "sharext-window.png"
           if ($cw -gt 0 -and $ch -gt 0) {
             $crop = New-Object System.Drawing.Bitmap $cw, $ch
