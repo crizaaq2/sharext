@@ -93,6 +93,19 @@ jobs:
       - name: Package
         working-directory: app
         run: Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath ..\sharext-windows.zip -Force
+      # Compiling is not the same as starting. Launch the packaged EXE from the
+      # same folder the ZIP ships, and fail if it dies inside 12 seconds.
+      - name: Smoke test the EXE
+        working-directory: app
+        shell: pwsh
+        run: |
+          $release = "build\windows\x64\runner\Release"
+          if (-not (Test-Path "$release\sharext.exe")) { throw "sharext.exe was not produced" }
+          $p = Start-Process -FilePath (Resolve-Path "$release\sharext.exe") -PassThru
+          Start-Sleep -Seconds 12
+          if ($p.HasExited) { throw "sharext.exe exited early (code $($p.ExitCode))" }
+          "sharext.exe is running: pid $($p.Id), working set $([math]::Round($p.WorkingSet64 / 1MB, 1)) MB"
+          Stop-Process -Id $p.Id -Force
       - uses: actions/upload-artifact@v4
         with:
           name: sharext-windows

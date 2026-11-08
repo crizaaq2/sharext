@@ -33,4 +33,5 @@ app/lib/l10n/generated/
 # Hand-out builds live in dist/ and are produced by CI, not committed.
 dist/*.apk
 dist/*.zip
+dist/windows/
 dist/SHA256SUMS.txt
