@@ -35,6 +35,9 @@ because this machine cannot cross-compile the runner (see `docs/RELEASE.md`).
 - `flutter test` in `app`: **11/11 pass** (bubble states, RTL, contrast of every
   token pair, queued → sent → delivered over the fake link, "not installed" stays
   queued, language and theme switching, demo data).
+- `sharext.exe` **starts on Windows**: CI run 42469913817 launched the packaged
+  binary and it was still alive after 12 s (pid 5964, 119.7 MB working set).
+  Started, not exercised: no screen was driven and nothing was clicked.
 - `flutter build apk --release --flavor prod`: **built**, 54.3 MB universal APK.
   Package `com.sharext.app`, minSdk 26, signed with the local debug key (not a
   release key, see SX-004), no `INTERNET` permission.
@@ -50,7 +53,7 @@ survival (needs devices).
 |---|---|---|
 | SX-001 Bootstrap the repository | Done | analyze clean, all tests pass, APK builds |
 | SX-002 Agent operating files | Done | `AGENTS.md`, `docs/PLAN.md`, `PROTOCOL.md`, `DESIGN.md`, `STATUS.md`, `QUESTIONS.md`, `qa/` |
-| SX-003 Continuous integration | Done | `ci.yml` run 42396426196: core tests, Android APK, Windows EXE all green in 5m21s. `release.yml` run 42396902941 published `v0.1.0` with all four assets |
+| SX-003 Continuous integration | Done | `ci.yml` run 42396426196: core tests, Android APK, Windows EXE all green in 5m21s; the windows job now also launches the packaged `sharext.exe` for 12 s. `release.yml` run 42396902941 published `v0.1.0` with all four assets |
 | SX-004 Flavors and signing | Partial | `dev`/`prod` flavors; prod builds. Release keystore is the owner's (`docs/RELEASE.md`) |
 | SX-005 Localization scaffold | Done | ARB en/so/ar, `flutter gen-l10n`, RTL widget test |
 | SX-006 Logging and diagnostics | Partial | `SxLog` ring buffer + `Redactor` with tests; Diagnostics sheet shows the export |

@@ -61,7 +61,12 @@ Setup) is SX-804 and not built yet — until then hand out the ZIP.
 
 The `.github/workflows/ci.yml` Windows job builds the same ZIP on
 `windows-latest` for every push, so a downloadable EXE exists even if you only
-have Linux and a phone.
+have Linux and a phone. It also launches the packaged `sharext.exe` and fails if
+the process dies within 12 s, because compiling is not the same as starting.
+
+`app/android/gradle/wrapper/gradle-wrapper.properties` points at
+`downloads.gradle.org` on purpose: the default `services.gradle.org` URL redirects
+to a GitHub release asset, and that host answered 504 twice in a row (2026-11-08).
 
 ## Artificial facts to keep straight
 
