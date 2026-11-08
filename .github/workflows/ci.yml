@@ -56,16 +56,40 @@ jobs:
       - name: Test
         working-directory: app
         run: flutter test
+      # github.com/…/releases/download answers 504 often enough that a single
+      # Gradle wrapper download must not decide whether the build runs.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.gradle/wrapper/dists
+          key: gradle-wrapper-${{ hashFiles('app/android/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Build universal APK
         working-directory: app
-        run: flutter build apk --release --flavor prod
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            echo "::group::flutter build apk, attempt $attempt"
+            if flutter build apk --release --flavor prod; then exit 0; fi
+            echo "::endgroup::"
+            sleep $((attempt * 20))
+          done
+          echo "::error::flutter build apk failed three times"
+          exit 1
       - uses: actions/upload-artifact@v4
         with:
           name: sharext-apk-universal
           path: app/build/app/outputs/flutter-apk/*.apk
       - name: Build per-ABI APKs
         working-directory: app
-        run: flutter build apk --release --flavor prod --split-per-abi
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            echo "::group::flutter build apk --split-per-abi, attempt $attempt"
+            if flutter build apk --release --flavor prod --split-per-abi; then exit 0; fi
+            echo "::endgroup::"
+            sleep $((attempt * 20))
+          done
+          echo "::error::flutter build apk --split-per-abi failed three times"
+          exit 1
       - uses: actions/upload-artifact@v4
         with:
           name: sharext-apk-per-abi

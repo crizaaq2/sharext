@@ -49,12 +49,30 @@ jobs:
         run: flutter analyze --fatal-infos
       - working-directory: app
         run: flutter test
+      - uses: actions/cache@v4
+        with:
+          path: ~/.gradle/wrapper/dists
+          key: gradle-wrapper-${{ hashFiles('app/android/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Universal APK
         working-directory: app
-        run: flutter build apk --release --flavor prod
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            if flutter build apk --release --flavor prod; then exit 0; fi
+            sleep $((attempt * 20))
+          done
+          echo "::error::flutter build apk failed three times"
+          exit 1
       - name: Per-ABI APKs
         working-directory: app
-        run: flutter build apk --release --flavor prod --split-per-abi
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            if flutter build apk --release --flavor prod --split-per-abi; then exit 0; fi
+            sleep $((attempt * 20))
+          done
+          echo "::error::flutter build apk --split-per-abi failed three times"
+          exit 1
       - name: Collect with clear names
         run: |
           mkdir -p out
