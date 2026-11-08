@@ -64,6 +64,14 @@ The `.github/workflows/ci.yml` Windows job builds the same ZIP on
 have Linux and a phone. It also launches the packaged `sharext.exe` and fails if
 the process dies within 12 s, because compiling is not the same as starting.
 
+Starting is not the same as drawing a window either, so the step then maximises
+the window and screenshots the desktop. The PNG is uploaded as the
+`sharext-windows-screenshot` artifact on every run (Actions → run → Artifacts).
+It counts the sampled distinct colours and prints a `::warning::` when the frame
+is nearly one colour, which is what a locked or headless desktop produces — that
+warning means "no evidence", not "ugly screenshot". The committed copy for the
+0.1.0 code is `docs/qa/screens/windows-first-frame.png`.
+
 `app/android/gradle/wrapper/gradle-wrapper.properties` points at a Gradle mirror on
 purpose: the official URLs redirect to a GitHub release asset that answered 504 for
 half an hour on 2026-11-08 and took the Android job down four times. The mirror
