@@ -52,5 +52,16 @@
   "shareLogs": "Wadaag log-yada",
   "copyDebugInfo": "Koobi macluumaadka",
   "youAreVisible": "La arki karo",
-  "attachmentsComingSoon": "Faylasha iyo sawirrada waxay imanayaan nooca xiga."
+  "attachmentsComingSoon": "Faylasha iyo sawirrada waxay imanayaan nooca xiga.",
+  "folderSection": "Faylal",
+  "folderTitle": "Folder-ka ShAre XT",
+  "folderSubtitle": "Wax walba oo la helo halkan ayay galaan",
+  "folderNotChosen": "Weli lama dooran",
+  "folderChoose": "Dooro folder",
+  "folderEmpty": "Folder-kani waa madhan yahay.",
+  "folderHint": "Faylasha la helo waxay galaan hal folder oo keliya. Faylasha adiga iska dhigto isla folder-kaas waxay sidoo kale ka soo muuqdaan liiskan.",
+  "folderCount": "{count} shay",
+  "@folderCount": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

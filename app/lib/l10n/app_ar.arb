@@ -52,5 +52,16 @@
   "shareLogs": "مشاركة السجلات",
   "copyDebugInfo": "نسخ معلومات التصحيح",
   "youAreVisible": "يمكن العثور عليك",
-  "attachmentsComingSoon": "الملفات والصور تصل في الإصدار القادم."
+  "attachmentsComingSoon": "الملفات والصور تصل في الإصدار القادم.",
+  "folderSection": "الملفات",
+  "folderTitle": "مجلد ShAre XT",
+  "folderSubtitle": "كل ما يصلك يُحفظ هنا",
+  "folderNotChosen": "لم يتم الاختيار بعد",
+  "folderChoose": "اختر مجلدًا",
+  "folderEmpty": "هذا المجلد فارغ.",
+  "folderHint": "الملفات المستلمة تُحفظ في مجلد واحد. الملفات التي تضعها أنت في المجلد نفسه تظهر في هذه القائمة أيضًا.",
+  "folderCount": "{count} عنصر",
+  "@folderCount": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

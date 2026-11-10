@@ -48,6 +48,7 @@ Pairs: A–B, B–C, C–D, B–E, D–F, D–G.
 | MT-28 | One hour idle battery | Inside 2 %/hour in Smart mode |
 | MT-29 | Five people at once | All five links work, no connection storm |
 | MT-30 | Reboot the phone | Keep ready comes back, messages still queued |
+| MT-31 | You → Files, choose one folder, then drop a photo/PDF into it with the phone's file manager and reopen Files | The same folder name shows, the dropped file is listed, and the list survives a restart. One phone is enough; no radio involved |
 
 ## Results template (`results.md`)
 

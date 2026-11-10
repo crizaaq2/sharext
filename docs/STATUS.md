@@ -1,7 +1,8 @@
 # Status
 
-Updated: 2026-11-08 (Sprint 0 foundations; first public release built by CI; the
-EXE is now launched, kept alive and screenshotted by CI)
+Updated: 2026-11-10 (Sprint 0 foundations; first public release built by CI; the
+EXE is now launched, kept alive and screenshotted by CI; the app now owns one
+folder for files)
 
 ## Distribution
 
@@ -22,6 +23,12 @@ message through the real outbox and the real framing code — over an in-memory
 transport, because **no Bluetooth plugin exists yet**. Nothing in this build
 touches a radio.
 
+Files have a home: **one folder**, chosen once by the owner with the Android
+folder picker. The grant is persistable, so the app keeps read and write access
+across restarts without holding any storage permission, and it can list files the
+owner dropped in with a file manager — that is the whole point of the picker.
+Nothing is transferred yet, so the folder is empty in practice.
+
 The Windows app has a complete source target, an icon set, a build script and a
 CI job. **`sharext.exe` builds, starts and draws its first window on Windows**:
 the `windows-latest` job launches the packaged binary from the folder the ZIP
@@ -36,9 +43,14 @@ it on a desktop yet, and this machine still cannot cross-compile
   peerTag, outbox backoff/dedupe/persistence, FakeTransport, log redaction,
   flags, frozen identifiers).
 - `flutter analyze` in `app`: **no issues**.
-- `flutter test` in `app`: **11/11 pass** (bubble states, RTL, contrast of every
+- `flutter test` in `app`: **17/17 pass** (bubble states, RTL, contrast of every
   token pair, queued → sent → delivered over the fake link, "not installed" stays
-  queued, language and theme switching, demo data).
+  queued, language and theme switching, demo data, and six folder-store cases:
+saved folder, picker round trip, cancelled picker, listing order with folders
+first and unnamed entries dropped, immutable sorting, and a build without the
+channel reporting no folder).
+- `:app:compileProdDebugKotlin`: **build successful**, so the new
+  `StorageChannel.kt` compiles against the real Android SDK.
 - `sharext.exe` **starts and renders on Windows**: run 42492069202 launched the
   packaged binary (pid alive after 12 s, 119.7 MB working set in the first run),
   maximised the window and captured the desktop. The result is committed as
@@ -66,6 +78,7 @@ survival (needs devices).
 | SX-006 Logging and diagnostics | Partial | `SxLog` ring buffer + `Redactor` with tests; Diagnostics sheet shows the export |
 | SX-007 Error handling and safe boot | Not started | — |
 | SX-008 Feature flags | Partial | typed `FeatureFlags` in `sx_core` with tests |
+| SX-009 One folder for files | Partial, NEEDS-DEVICE-TEST | `sharext/storage` channel (`pickFolder`, `folder`, `list`, `forgetFolder`) over SAF with a persistable grant; `ChannelFolderStore` + `FilesSheet` under You → Files; strings in en/so/ar; six channel tests, analyze clean, Kotlin compiles. MT-31 not run yet: the picker and a file-manager drop need one real phone |
 | SX-901 Theme tokens | Done | `app/lib/design/tokens.dart` + `app/test/contrast_test.dart` |
 | SX-904 Brand assets | Done | `tools/gen_brand_assets.py`: adaptive icon + monochrome layer, notification icon, Android 12 splash mark, `.ico` 16–256 px |
 | SX-905 Fonts | Done | Bricolage Grotesque + Readex Pro bundled, `FontVariation` weights, no runtime fetching |
@@ -87,12 +100,18 @@ survival (needs devices).
   are still unverified on Windows.
 - Demo peers and messages are in memory: a restart loses them (SX-301).
 - `docs/PLAN.md` is a digest of the owner's brief, not the verbatim original.
-- No crash recovery, no app lock, no message requests, no files: those are later
-  epics and are honestly absent from the UI (the attach button says so).
+- No crash recovery, no app lock, no message requests, and **no file transfer**:
+  the folder exists and lists its contents, but nothing is received or saved there
+  until the radio (EP-03) lands. The attach button still says so.
+- The folder picker is Android only. On Windows the sheet honestly shows "Not
+  chosen yet" and the button does nothing yet (SX-803).
+- The folder list is name-only: size and date come when the file bubbles exist.
 
 ## Next
 
-1. Owner: two real phones for SX-010/SX-012; run MT-03 and MT-09 and paste logs.
+1. Owner: one phone for MT-31 (choose the folder, drop a file in it with a file
+   manager, see it listed), and two real phones for SX-010/SX-012; run MT-03 and
+   MT-09 and paste logs.
 2. SX-007 and SX-008 completion, then EP-02: SX-102 Noise, SX-105 session,
    SX-110 LinkManager, SX-103 protobuf codegen.
 3. EP-03 the Kotlin radio plugin (SX-201 … SX-206), which is what turns this

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../design/components/ui_kit.dart';
 import '../../design/tokens.dart';
 import '../../l10n/generated/app_localizations.dart';
+import '../files/files_sheet.dart';
 import '../shell/sx_page.dart';
 import '../state/app_state.dart';
 
@@ -149,6 +150,13 @@ class _YouScreenState extends ConsumerState<YouScreen> {
             title: l10n.readinessKeepReady,
             subtitle: l10n.notSetUpYet,
             trailing: StatusPill(label: l10n.limited, color: tokens.accent),
+          ),
+          SxSectionHeader(title: l10n.folderSection),
+          SxRow(
+            icon: Icons.folder_outlined,
+            title: l10n.folderTitle,
+            subtitle: l10n.folderSubtitle,
+            onTap: () => showFilesSheet(context),
           ),
           SxSectionHeader(title: l10n.diagnostics),
           SxRow(
